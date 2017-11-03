@@ -4,7 +4,7 @@ import com.samcarpentier.login.gateway.domain.entity.Account;
 
 public class AccountDtoAssembler {
 
-  public AccountDto createDto(Account account) {
+  public AccountDto assembleDto(Account account) {
     return new AccountDto(account.getUsername(), account.getPassword(), account.getPhoneNumbers());
   }
 

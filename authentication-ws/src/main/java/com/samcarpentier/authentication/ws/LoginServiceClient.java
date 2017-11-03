@@ -37,8 +37,8 @@ public class LoginServiceClient {
 
     try {
       loginResponse = loginServiceBlockingStub.authenticate(LoginRequest.newBuilder()
-                                                                        .setUsername("empty")
-                                                                        .setPassword("empty")
+                                                                        .setUsername("username1")
+                                                                        .setPassword("password1")
                                                                         .build());
     } catch (StatusRuntimeException e) {
       System.out.println(e.getStatus());

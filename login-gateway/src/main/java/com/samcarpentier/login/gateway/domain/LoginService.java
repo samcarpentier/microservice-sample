@@ -2,11 +2,10 @@ package com.samcarpentier.login.gateway.domain;
 
 import java.util.Optional;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import com.samcarpentier.login.gateway.LoginRequest;
 import com.samcarpentier.login.gateway.LoginResponse;
 import com.samcarpentier.login.gateway.LoginServiceGrpc;
+import com.samcarpentier.login.gateway.data.exception.AccountNotFoundException;
 import com.samcarpentier.login.gateway.data.exception.WrongUsernamePasswordException;
 import com.samcarpentier.login.gateway.domain.entity.Account;
 
