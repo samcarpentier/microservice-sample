@@ -2,10 +2,13 @@ package com.samcarpentier.login.gateway.data;
 
 import java.util.Map;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.samcarpentier.login.gateway.data.entity.AccountDto;
 import com.samcarpentier.login.gateway.data.entity.AccountDtoAssembler;
+import com.samcarpentier.login.gateway.data.exception.WrongUsernamePasswordException;
 import com.samcarpentier.login.gateway.domain.AccountRepository;
 import com.samcarpentier.login.gateway.domain.entity.Account;
 
@@ -20,13 +23,17 @@ public class InMemoryAccountRepository implements AccountRepository {
   }
 
   @Override
-  public Account login(String username, String password) {
+  public Account login(String username, String password)
+    throws AccountNotFoundException,
+      WrongUsernamePasswordException
+  {
     Optional<Account> account = Optional.fromNullable(usernameToAccountAssociations.get(username))
                                         .transform(accountDtoAssembler::assemble);
 
     if (!account.isPresent()) {
-      System.out.println(String.format("No account matching username [%s]", username));
-      return null;
+      String message = String.format("No account matching username [%s]", username);
+      System.out.println(message);
+      throw new AccountNotFoundException(message);
     }
 
     boolean isPasswordMatching = account.get().getPassword().equals(password);
@@ -34,8 +41,9 @@ public class InMemoryAccountRepository implements AccountRepository {
       return account.get();
     }
 
-    System.out.println(String.format("Wrong password for username [%s]", username));
-    return null;
+    String message = String.format("Wrong password for username [%s]", username);
+    System.out.println(message);
+    throw new WrongUsernamePasswordException(message);
   }
 
   public void directSave(AccountDto accountDto) {

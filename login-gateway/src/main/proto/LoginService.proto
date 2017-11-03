@@ -6,7 +6,7 @@ option java_package = "com.samcarpentier.login.gateway";
 option java_outer_classname = "LoginGatewayProto";
 
 service LoginService {
-  rpc authenticate (LoginRequest) returns (LoginResponse);
+  rpc authenticate (LoginRequest) returns (LoginResponse) {}
 }
 
 message LoginRequest {

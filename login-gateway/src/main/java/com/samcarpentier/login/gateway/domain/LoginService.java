@@ -1,12 +1,16 @@
 package com.samcarpentier.login.gateway.domain;
 
+import java.util.Optional;
+
+import javax.security.auth.login.AccountNotFoundException;
+
 import com.samcarpentier.login.gateway.LoginRequest;
 import com.samcarpentier.login.gateway.LoginResponse;
 import com.samcarpentier.login.gateway.LoginServiceGrpc;
+import com.samcarpentier.login.gateway.data.exception.WrongUsernamePasswordException;
 import com.samcarpentier.login.gateway.domain.entity.Account;
 
 import io.grpc.Status;
-import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
 
 public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
@@ -19,17 +23,34 @@ public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
 
   @Override
   public void authenticate(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
-    Account account = accountRepository.login(request.getUsername(), request.getPassword());
+    Optional<Account> account = retrieveAccount(request, responseObserver);
 
-    if (account == null) {
-      responseObserver.onError(new StatusException(Status.fromThrowable(new Exception("Not found"))));
-    } else {
+    if (account.isPresent()) {
       responseObserver.onNext(LoginResponse.newBuilder()
-                                           .addAllPhoneNumbers(account.getPhoneNumbers())
+                                           .addAllPhoneNumbers(account.get().getPhoneNumbers())
                                            .build());
       responseObserver.onCompleted();
     }
+  }
 
+  private Optional<Account> retrieveAccount(LoginRequest request,
+                                            StreamObserver<LoginResponse> responseObserver)
+  {
+    Optional<Account> account = Optional.empty();
+
+    try {
+      account = Optional.of(accountRepository.login(request.getUsername(), request.getPassword()));
+    } catch (AccountNotFoundException e) {
+      responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage())
+                                               .withCause(e)
+                                               .asException());
+    } catch (WrongUsernamePasswordException e) {
+      responseObserver.onError(Status.PERMISSION_DENIED.withDescription(e.getMessage())
+                                                       .withCause(e)
+                                                       .asException());
+    }
+
+    return account;
   }
 
 }

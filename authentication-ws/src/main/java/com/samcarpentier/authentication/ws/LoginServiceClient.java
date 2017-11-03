@@ -11,10 +11,18 @@ import io.grpc.StatusRuntimeException;
 
 public class LoginServiceClient {
 
+  private final String ipAddress;
+  private final int port;
+
   private LoginServiceBlockingStub loginServiceBlockingStub;
 
+  public LoginServiceClient(String ipAddress, int port) {
+    this.ipAddress = ipAddress;
+    this.port = port;
+  }
+
   public void authenticate() throws Throwable {
-    ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8080)
+    ManagedChannel channel = ManagedChannelBuilder.forAddress(ipAddress, port)
                                                   .usePlaintext(true)
                                                   .build();
 
@@ -29,12 +37,12 @@ public class LoginServiceClient {
 
     try {
       loginResponse = loginServiceBlockingStub.authenticate(LoginRequest.newBuilder()
-                                                                        .setUsername("username1")
-                                                                        .setPassword("password1")
+                                                                        .setUsername("empty")
+                                                                        .setPassword("empty")
                                                                         .build());
     } catch (StatusRuntimeException e) {
       System.out.println(e.getStatus());
-      throw e;
+      return null;
     }
 
     System.out.println(loginResponse);
