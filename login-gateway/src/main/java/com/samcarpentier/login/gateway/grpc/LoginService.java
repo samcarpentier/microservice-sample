@@ -1,4 +1,4 @@
-package com.samcarpentier.login.gateway.domain;
+package com.samcarpentier.login.gateway.grpc;
 
 import java.util.Optional;
 
@@ -7,6 +7,7 @@ import com.samcarpentier.login.gateway.LoginResponse;
 import com.samcarpentier.login.gateway.LoginServiceGrpc;
 import com.samcarpentier.login.gateway.data.exception.AccountNotFoundException;
 import com.samcarpentier.login.gateway.data.exception.WrongUsernamePasswordException;
+import com.samcarpentier.login.gateway.domain.AccountRepository;
 import com.samcarpentier.login.gateway.domain.entity.Account;
 
 import io.grpc.Status;

@@ -1,21 +1,32 @@
 package com.samcarpentier.authentication.ws;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Sets;
+import com.samcarpentier.authentication.ws.grpc.LoginServiceClient;
+
 public class AuthenticationWsMain {
 
   private static final int DEFAULT_PORT = 8080;
 
   public static void main(String[] args) throws Throwable {
-    LoginServiceClient loginServiceClient = new LoginServiceClient("localhost", selectHttpPort());
+    LoginServiceClient loginServiceClient = new LoginServiceClient("//localhost", selectHttpPort());
     loginServiceClient.authenticate();
   }
 
-  private static int selectHttpPort() {
+  private static Set<Integer> selectHttpPort() {
+
     try {
-      return Integer.parseInt(System.getProperty("port"));
-    } catch (NumberFormatException e) {
-      System.out.println(String.format("Could not retrieve JVM argument [-Dport]. Using default port %s",
+      return Arrays.asList(System.getProperty("ports").split(","))
+                   .stream()
+                   .map(Integer::parseInt)
+                   .collect(Collectors.toSet());
+    } catch (NumberFormatException | NullPointerException e) {
+      System.out.println(String.format("Could not retrieve JVM argument [-Dports]. Using default port %s",
                                        DEFAULT_PORT));
-      return DEFAULT_PORT;
+      return Sets.newHashSet(DEFAULT_PORT);
     }
   }
 

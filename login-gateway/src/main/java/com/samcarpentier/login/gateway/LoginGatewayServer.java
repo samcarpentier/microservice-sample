@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.samcarpentier.login.gateway.data.AccountDevelopmentInMemoryDataFactory;
 import com.samcarpentier.login.gateway.data.InMemoryAccountRepository;
 import com.samcarpentier.login.gateway.data.entity.AccountDtoAssembler;
-import com.samcarpentier.login.gateway.domain.LoginService;
+import com.samcarpentier.login.gateway.grpc.LoginService;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
