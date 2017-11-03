@@ -2,6 +2,9 @@ package com.samcarpentier.login.gateway.grpc;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.samcarpentier.login.gateway.LoginRequest;
 import com.samcarpentier.login.gateway.LoginResponse;
 import com.samcarpentier.login.gateway.LoginServiceGrpc;
@@ -15,6 +18,8 @@ import io.grpc.stub.StreamObserver;
 
 public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
 
+  private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
+
   private final AccountRepository accountRepository;
 
   public LoginService(AccountRepository accountRepository) {
@@ -26,6 +31,7 @@ public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
     Optional<Account> account = retrieveAccount(request, responseObserver);
 
     if (account.isPresent()) {
+      logger.info("Successful request");
       responseObserver.onNext(LoginResponse.newBuilder()
                                            .addAllPhoneNumbers(account.get().getPhoneNumbers())
                                            .build());

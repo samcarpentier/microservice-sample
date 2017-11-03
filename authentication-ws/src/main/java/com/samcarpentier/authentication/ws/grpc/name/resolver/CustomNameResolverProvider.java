@@ -14,7 +14,7 @@ import io.grpc.NameResolverProvider;
 public class CustomNameResolverProvider extends NameResolverProvider {
 
   private static final int PRIORITY = 5;
-  private static final String DEFAULT_SCHEME = "";
+  private static final String DEFAULT_SCHEME = "mesh";
   private static final boolean AVAILABLE = true;
 
   private Set<Integer> ports;

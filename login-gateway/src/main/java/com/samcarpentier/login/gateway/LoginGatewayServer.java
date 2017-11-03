@@ -2,6 +2,9 @@ package com.samcarpentier.login.gateway;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.samcarpentier.login.gateway.data.AccountDevelopmentInMemoryDataFactory;
 import com.samcarpentier.login.gateway.data.InMemoryAccountRepository;
 import com.samcarpentier.login.gateway.data.entity.AccountDtoAssembler;
@@ -12,15 +15,15 @@ import io.grpc.ServerBuilder;
 
 public class LoginGatewayServer {
 
+  private static final Logger logger = LoggerFactory.getLogger(LoginGatewayServer.class);
   private static final int DEFAULT_PORT = 8080;
 
   public static void main(String[] args) throws InterruptedException, IOException {
-    Server server = ServerBuilder.forPort(selectHttpPort())
-                                 .addService(createLoginService())
-                                 .build();
+    int httpPort = selectHttpPort();
+    Server server = ServerBuilder.forPort(httpPort).addService(createLoginService()).build();
 
     server.start();
-    System.out.println("Server started on port 8080");
+    logger.info(String.format("Server started on port %s", httpPort));
     server.awaitTermination();
   }
 

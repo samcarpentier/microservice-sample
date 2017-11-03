@@ -1,8 +1,10 @@
 package com.samcarpentier.authentication.ws.grpc;
 
+import java.net.InetSocketAddress;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.samcarpentier.authentication.ws.grpc.name.resolver.CustomNameResolverProvider;
+import com.samcarpentier.authentication.ws.grpc.name.resolver.StaticResolver;
 import com.samcarpentier.login.gateway.LoginRequest;
 import com.samcarpentier.login.gateway.LoginResponse;
 import com.samcarpentier.login.gateway.LoginServiceGrpc;
@@ -28,11 +30,15 @@ public class LoginServiceClient {
   public void authenticate() throws Throwable {
     ManagedChannel channel = ManagedChannelBuilder.forTarget(ipAddress)
                                                   .usePlaintext(true)
-                                                  .nameResolverFactory(new CustomNameResolverProvider().withPorts(ports))
+                                                  .nameResolverFactory(StaticResolver.factory(ports.stream()
+                                                                                                   .map(port -> new InetSocketAddress(ipAddress,
+                                                                                                                                      port))
+                                                                                                   .collect(Collectors.toList())))
                                                   .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())
                                                   .build();
 
     loginServiceBlockingStub = LoginServiceGrpc.newBlockingStub(channel);
+    attemptLogin();
     attemptLogin();
 
     channel.shutdown();

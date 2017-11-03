@@ -12,7 +12,7 @@ public class AuthenticationWsMain {
   private static final int DEFAULT_PORT = 8080;
 
   public static void main(String[] args) throws Throwable {
-    LoginServiceClient loginServiceClient = new LoginServiceClient("//localhost", selectHttpPort());
+    LoginServiceClient loginServiceClient = new LoginServiceClient("127.0.0.1", selectHttpPort());
     loginServiceClient.authenticate();
   }
 
