@@ -13,15 +13,15 @@ import io.grpc.EquivalentAddressGroup;
 import io.grpc.NameResolver;
 import io.grpc.Status;
 
-public class CustomNameResolver extends NameResolver {
+public class StaticAddressNameResolver extends NameResolver {
 
   private static final String NO_SERVICE_AUTHORITY = "";
 
-  private static final Logger logger = LoggerFactory.getLogger(CustomNameResolver.class);
+  private static final Logger logger = LoggerFactory.getLogger(StaticAddressNameResolver.class);
 
   private final Collection<InetSocketAddress> staticAddresses;
 
-  public CustomNameResolver(Collection<InetSocketAddress> serverAddresses) {
+  public StaticAddressNameResolver(Collection<InetSocketAddress> serverAddresses) {
     this.staticAddresses = serverAddresses;
   }
 

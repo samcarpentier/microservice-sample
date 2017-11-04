@@ -7,19 +7,19 @@ import java.util.Collection;
 import io.grpc.Attributes;
 import io.grpc.NameResolver;
 
-public class CustomNameResolverFactory extends NameResolver.Factory {
+public class StaticAddressNameResolverFactory extends NameResolver.Factory {
 
   public static final String DEFAULT_SCHEME = "mesh";
 
   private final Collection<InetSocketAddress> serverAddresses;
 
-  public CustomNameResolverFactory(Collection<InetSocketAddress> serverAddresses) {
+  public StaticAddressNameResolverFactory(Collection<InetSocketAddress> serverAddresses) {
     this.serverAddresses = serverAddresses;
   }
 
   @Override
   public NameResolver newNameResolver(URI targetUri, Attributes params) {
-    return new CustomNameResolverProvider(DEFAULT_SCHEME,
+    return new StaticAddressNameResolverProvider(DEFAULT_SCHEME,
                                           serverAddresses).newNameResolver(targetUri, params);
   }
 

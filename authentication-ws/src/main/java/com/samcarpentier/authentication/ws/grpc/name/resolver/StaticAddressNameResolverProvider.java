@@ -8,7 +8,7 @@ import io.grpc.Attributes;
 import io.grpc.NameResolver;
 import io.grpc.NameResolverProvider;
 
-public class CustomNameResolverProvider extends NameResolverProvider {
+public class StaticAddressNameResolverProvider extends NameResolverProvider {
 
   private static final boolean AVAILABLE = true;
   private static final int PRIORITY = 5;
@@ -16,7 +16,7 @@ public class CustomNameResolverProvider extends NameResolverProvider {
   private final String defaultScheme;
   private final Collection<InetSocketAddress> serverAddresses;
 
-  public CustomNameResolverProvider(String defaultScheme,
+  public StaticAddressNameResolverProvider(String defaultScheme,
                                     Collection<InetSocketAddress> serverAddresses)
   {
     this.defaultScheme = defaultScheme;
@@ -26,7 +26,7 @@ public class CustomNameResolverProvider extends NameResolverProvider {
   @Override
   public NameResolver newNameResolver(URI targetUri, Attributes params) {
     if (defaultScheme.equals(targetUri.getScheme())) {
-      return new CustomNameResolver(serverAddresses);
+      return new StaticAddressNameResolver(serverAddresses);
     }
 
     return null;

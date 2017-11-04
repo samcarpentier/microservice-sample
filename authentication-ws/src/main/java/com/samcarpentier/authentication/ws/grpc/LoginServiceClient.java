@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.samcarpentier.authentication.ws.grpc.name.resolver.CustomNameResolverFactory;
+import com.samcarpentier.authentication.ws.grpc.name.resolver.StaticAddressNameResolverFactory;
 import com.samcarpentier.login.gateway.LoginRequest;
 import com.samcarpentier.login.gateway.LoginResponse;
 import com.samcarpentier.login.gateway.LoginServiceGrpc;
@@ -36,7 +36,7 @@ public class LoginServiceClient {
 
     ManagedChannel channel = ManagedChannelBuilder.forTarget(ipAddress)
                                                   .usePlaintext(true)
-                                                  .nameResolverFactory(new CustomNameResolverFactory(staticAddresses))
+                                                  .nameResolverFactory(new StaticAddressNameResolverFactory(staticAddresses))
                                                   .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())
                                                   .build();
 
