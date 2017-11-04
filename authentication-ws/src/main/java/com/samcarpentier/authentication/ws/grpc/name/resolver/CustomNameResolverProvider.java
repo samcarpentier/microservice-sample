@@ -1,11 +1,8 @@
 package com.samcarpentier.authentication.ws.grpc.name.resolver;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import io.grpc.Attributes;
 import io.grpc.NameResolver;
@@ -13,16 +10,26 @@ import io.grpc.NameResolverProvider;
 
 public class CustomNameResolverProvider extends NameResolverProvider {
 
-  private static final int PRIORITY = 5;
-  private static final String DEFAULT_SCHEME = "mesh";
   private static final boolean AVAILABLE = true;
+  private static final int PRIORITY = 5;
 
-  private Set<Integer> ports;
+  private final String defaultScheme;
+  private final Collection<InetSocketAddress> serverAddresses;
+
+  public CustomNameResolverProvider(String defaultScheme,
+                                    Collection<InetSocketAddress> serverAddresses)
+  {
+    this.defaultScheme = defaultScheme;
+    this.serverAddresses = serverAddresses;
+  }
 
   @Override
   public NameResolver newNameResolver(URI targetUri, Attributes params) {
-    Preconditions.checkState(ports != null, "No port registered for given target");
-    return new CustomNameResolver(targetUri.getHost(), ports);
+    if (defaultScheme.equals(targetUri.getScheme())) {
+      return new CustomNameResolver(serverAddresses);
+    }
+
+    return null;
   }
 
   @Override
@@ -37,12 +44,6 @@ public class CustomNameResolverProvider extends NameResolverProvider {
 
   @Override
   public String getDefaultScheme() {
-    return DEFAULT_SCHEME;
+    return defaultScheme;
   }
-
-  public CustomNameResolverProvider withPorts(Collection<Integer> ports) {
-    this.ports = ports.stream().collect(Collectors.toSet());
-    return this;
-  }
-
 }

@@ -1,14 +1,12 @@
 package com.samcarpentier.authentication.ws.grpc.name.resolver;
 
 import java.net.InetSocketAddress;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import io.grpc.Attributes;
 import io.grpc.EquivalentAddressGroup;
@@ -17,45 +15,39 @@ import io.grpc.Status;
 
 public class CustomNameResolver extends NameResolver {
 
+  private static final String NO_SERVICE_AUTHORITY = "";
+
   private static final Logger logger = LoggerFactory.getLogger(CustomNameResolver.class);
-  private static final String SERVICE_AUTHORITY = "";
 
-  private final String host;
-  private final Set<Integer> ports;
+  private final Collection<InetSocketAddress> staticAddresses;
 
-  public CustomNameResolver(String host, Set<Integer> ports) {
-    this.host = host;
-    this.ports = ports;
+  public CustomNameResolver(Collection<InetSocketAddress> serverAddresses) {
+    this.staticAddresses = serverAddresses;
   }
 
   @Override
-  public void start(Listener listener) {
-    List<EquivalentAddressGroup> equivalentAddressGroups = Lists.newArrayList();
-    logger.info(String.format("Registering servers: %s",
-                              ports.stream()
-                                   .map(port -> host + ":" + port)
-                                   .collect(Collectors.toSet())));
+  public void start(NameResolver.Listener listener) {
+    try {
+      List<EquivalentAddressGroup> equivalentAddressGroups = staticAddresses.stream()
+                                                                            .map(address -> new EquivalentAddressGroup(address))
+                                                                            .collect(Collectors.toList());
 
-    ports.stream()
-         .map(port -> new InetSocketAddress(host, port))
-         .forEach(inetSocketAddress -> new EquivalentAddressGroup(inetSocketAddress));
-
-    if (!equivalentAddressGroups.isEmpty()) {
       listener.onAddresses(equivalentAddressGroups, Attributes.EMPTY);
-      listener.onError(Status.INTERNAL);
+      logger.debug(String.format("Registered servers: %s",
+                                 equivalentAddressGroups.stream()
+                                                        .map(EquivalentAddressGroup::getAddresses)
+                                                        .collect(Collectors.toSet())));
+    } catch (Throwable e) {
+      listener.onError(Status.UNKNOWN);
     }
-
-    logger.info("started");
   }
 
   @Override
   public String getServiceAuthority() {
-    return SERVICE_AUTHORITY;
+    return NO_SERVICE_AUTHORITY;
   }
 
   @Override
   public void shutdown() {
-    throw new RuntimeException("SHIT");
   }
-
 }

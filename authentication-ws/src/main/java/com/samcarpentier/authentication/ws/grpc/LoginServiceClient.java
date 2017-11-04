@@ -1,10 +1,11 @@
 package com.samcarpentier.authentication.ws.grpc;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.samcarpentier.authentication.ws.grpc.name.resolver.StaticResolver;
+import com.samcarpentier.authentication.ws.grpc.name.resolver.CustomNameResolverFactory;
 import com.samcarpentier.login.gateway.LoginRequest;
 import com.samcarpentier.login.gateway.LoginResponse;
 import com.samcarpentier.login.gateway.LoginServiceGrpc;
@@ -28,12 +29,14 @@ public class LoginServiceClient {
   }
 
   public void authenticate() throws Throwable {
+    List<InetSocketAddress> staticAddresses = ports.stream()
+                                                   .map(port -> new InetSocketAddress(ipAddress,
+                                                                                      port))
+                                                   .collect(Collectors.toList());
+
     ManagedChannel channel = ManagedChannelBuilder.forTarget(ipAddress)
                                                   .usePlaintext(true)
-                                                  .nameResolverFactory(StaticResolver.factory(ports.stream()
-                                                                                                   .map(port -> new InetSocketAddress(ipAddress,
-                                                                                                                                      port))
-                                                                                                   .collect(Collectors.toList())))
+                                                  .nameResolverFactory(new CustomNameResolverFactory(staticAddresses))
                                                   .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())
                                                   .build();
 
@@ -41,7 +44,7 @@ public class LoginServiceClient {
     attemptLogin();
     attemptLogin();
 
-    channel.shutdown();
+    channel.shutdownNow();
   }
 
   private LoginResponse attemptLogin() throws Throwable {
