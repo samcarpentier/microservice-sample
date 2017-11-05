@@ -6,7 +6,7 @@ option java_package = "com.samcarpentier.login.gateway";
 option java_outer_classname = "LoginGatewayProto";
 
 service LoginService {
-  rpc authenticate (LoginRequest) returns (LoginResponse) {}
+  rpc login (LoginRequest) returns (LoginResponse) {}
 }
 
 message LoginRequest {
@@ -17,5 +17,3 @@ message LoginRequest {
 message LoginResponse {
   repeated string phoneNumbers = 1;
 }
-
-

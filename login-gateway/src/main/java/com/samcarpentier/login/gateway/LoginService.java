@@ -24,7 +24,7 @@ public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
   }
 
   @Override
-  public void authenticate(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
+  public void login(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
     Optional<Account> account = retrieveAccount(request.getUsername(),
                                                 request.getPassword(),
                                                 responseObserver);

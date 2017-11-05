@@ -13,7 +13,7 @@ public class AuthenticationWsMain {
 
   public static void main(String[] args) throws Throwable {
     LoginServiceClient loginServiceClient = new LoginServiceClient("127.0.0.1", selectHttpPort());
-    loginServiceClient.authenticate();
+    loginServiceClient.authenticate("username1", "password1");
   }
 
   private static Set<Integer> selectHttpPort() {

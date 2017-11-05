@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.samcarpentier.authentication.ws.grpc.name.resolver.StaticAddressNameResolverFactory;
 import com.samcarpentier.login.gateway.LoginRequest;
 import com.samcarpentier.login.gateway.LoginResponse;
@@ -18,50 +21,50 @@ import io.grpc.util.RoundRobinLoadBalancerFactory;
 
 public class LoginServiceClient {
 
+  private static final Logger logger = LoggerFactory.getLogger(LoginServiceClient.class);
+
   private final String ipAddress;
-  private final Set<Integer> ports;
+  private final List<InetSocketAddress> staticServerAddresses;
 
   private LoginServiceBlockingStub loginServiceBlockingStub;
 
   public LoginServiceClient(String ipAddress, Set<Integer> ports) {
     this.ipAddress = ipAddress;
-    this.ports = ports;
+    this.staticServerAddresses = ports.stream()
+                                      .map(this::socketAddressFromPort)
+                                      .collect(Collectors.toList());
   }
 
-  public void authenticate() throws Throwable {
-    List<InetSocketAddress> staticAddresses = ports.stream()
-                                                   .map(port -> new InetSocketAddress(ipAddress,
-                                                                                      port))
-                                                   .collect(Collectors.toList());
-
+  public void authenticate(String username, String password) throws Throwable {
     ManagedChannel channel = ManagedChannelBuilder.forTarget(ipAddress)
                                                   .usePlaintext(true)
-                                                  .nameResolverFactory(new StaticAddressNameResolverFactory(staticAddresses))
+                                                  .nameResolverFactory(new StaticAddressNameResolverFactory(staticServerAddresses))
                                                   .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())
                                                   .build();
 
     loginServiceBlockingStub = LoginServiceGrpc.newBlockingStub(channel);
-    attemptLogin();
-    attemptLogin();
+    attemptLogin(username, password);
 
     channel.shutdownNow();
   }
 
-  private LoginResponse attemptLogin() throws Throwable {
-    LoginResponse loginResponse;
+  private InetSocketAddress socketAddressFromPort(int port) {
+    return new InetSocketAddress(ipAddress, port);
+  }
+
+  private LoginResponse attemptLogin(String username, String password) throws Throwable {
+    LoginResponse loginResponse = null;
 
     try {
-      loginResponse = loginServiceBlockingStub.authenticate(LoginRequest.newBuilder()
-                                                                        .setUsername("username1")
-                                                                        .setPassword("password1")
-                                                                        .build());
+      loginResponse = loginServiceBlockingStub.login(LoginRequest.newBuilder()
+                                                                 .setUsername(username)
+                                                                 .setPassword(password)
+                                                                 .build());
     } catch (StatusRuntimeException e) {
-      System.out.println(e.getStatus());
-      return null;
+      logger.warn(String.format("Login failed: %s", e.getStatus().getCode()));
     }
 
-    System.out.println(loginResponse);
-
+    logger.debug(String.format("Phone numbers: %s", loginResponse.getPhoneNumbersList()));
     return loginResponse;
   }
 

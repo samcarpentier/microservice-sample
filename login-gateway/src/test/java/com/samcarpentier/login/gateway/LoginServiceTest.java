@@ -61,7 +61,7 @@ public class LoginServiceTest {
     given(loginApplicationService.login(USERNAME, PASSWORD)).willReturn(account);
     given(account.getPhoneNumbers()).willReturn(PHONE_NUMBERS);
 
-    loginService.authenticate(loginRequest, responseObserver);
+    loginService.login(loginRequest, responseObserver);
 
     verify(responseObserver).onNext(loginResponseArgumentCaptor.capture());
     assertThat(loginResponseArgumentCaptor.getValue()
@@ -76,7 +76,7 @@ public class LoginServiceTest {
     given(loginApplicationService.login(USERNAME, PASSWORD)).willReturn(account);
     given(account.getPhoneNumbers()).willReturn(PHONE_NUMBERS);
 
-    loginService.authenticate(loginRequest, responseObserver);
+    loginService.login(loginRequest, responseObserver);
 
     verify(responseObserver).onNext(Mockito.any());
     verify(responseObserver).onCompleted();
@@ -125,7 +125,7 @@ public class LoginServiceTest {
     LoginRequest loginRequest = givenLoginRequest(USERNAME, PASSWORD);
     doThrow(exception).when(loginApplicationService).login(USERNAME, PASSWORD);
 
-    loginService.authenticate(loginRequest, responseObserver);
+    loginService.login(loginRequest, responseObserver);
   }
 
   private void assertThatRegisteredErrorIsInstanceOf(Class<? extends Exception> exception) {
