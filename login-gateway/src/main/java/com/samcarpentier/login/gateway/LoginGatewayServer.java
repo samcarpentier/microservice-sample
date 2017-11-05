@@ -5,10 +5,10 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.samcarpentier.login.gateway.data.AccountDevelopmentInMemoryDataFactory;
+import com.samcarpentier.login.gateway.application.LoginApplicationService;
 import com.samcarpentier.login.gateway.data.InMemoryAccountRepository;
+import com.samcarpentier.login.gateway.data.development.AccountDevDataAbstractFactory;
 import com.samcarpentier.login.gateway.data.entity.AccountDtoAssembler;
-import com.samcarpentier.login.gateway.grpc.LoginService;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -32,10 +32,11 @@ public class LoginGatewayServer {
 
     if (isDevelopmentExecution()) {
       System.out.println("Development execution detected. Provisioning dev data");
-      new AccountDevelopmentInMemoryDataFactory(inMemoryAccountRepository).createDevelopmentData();
+      new AccountDevDataAbstractFactory().createDevelopmentData(inMemoryAccountRepository);
     }
 
-    return new LoginService(inMemoryAccountRepository);
+    LoginApplicationService loginApplicationService = new LoginApplicationService(inMemoryAccountRepository);
+    return new LoginService(loginApplicationService);
   }
 
   private static int selectHttpPort() {

@@ -1,13 +1,14 @@
-package com.samcarpentier.login.gateway.data;
+package com.samcarpentier.login.gateway.data.development;
 
 import com.google.common.collect.Lists;
+import com.samcarpentier.login.gateway.data.InMemoryAccountRepository;
 import com.samcarpentier.login.gateway.data.entity.AccountDto;
 
-public class AccountDevelopmentInMemoryDataFactory {
+public class AccountInMemoryDevDataFactory {
 
   private final InMemoryAccountRepository inMemoryAccountRepository;
 
-  public AccountDevelopmentInMemoryDataFactory(InMemoryAccountRepository inMemoryAccountRepository) {
+  public AccountInMemoryDevDataFactory(InMemoryAccountRepository inMemoryAccountRepository) {
     this.inMemoryAccountRepository = inMemoryAccountRepository;
   }
 

@@ -1,4 +1,4 @@
-package com.samcarpentier.login.gateway.data.exception;
+package com.samcarpentier.login.gateway.domain.exception;
 
 public class AccountNotFoundException extends Exception {
 
