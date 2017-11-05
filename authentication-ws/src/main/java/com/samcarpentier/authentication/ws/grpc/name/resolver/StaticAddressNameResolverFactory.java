@@ -9,7 +9,7 @@ import io.grpc.NameResolver;
 
 public class StaticAddressNameResolverFactory extends NameResolver.Factory {
 
-  public static final String DEFAULT_SCHEME = "mesh";
+  public static final String DEFAULT_SCHEME = "anything";
 
   private final Collection<InetSocketAddress> serverAddresses;
 
@@ -20,7 +20,8 @@ public class StaticAddressNameResolverFactory extends NameResolver.Factory {
   @Override
   public NameResolver newNameResolver(URI targetUri, Attributes params) {
     return new StaticAddressNameResolverProvider(DEFAULT_SCHEME,
-                                          serverAddresses).newNameResolver(targetUri, params);
+                                                 serverAddresses).newNameResolver(targetUri,
+                                                                                  params);
   }
 
   @Override
