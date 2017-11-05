@@ -1,4 +1,4 @@
-package com.samcarpentier.login.gateway;
+package com.samcarpentier.login.gateway.grpc;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -21,6 +21,9 @@ import com.samcarpentier.login.gateway.application.LoginApplicationService;
 import com.samcarpentier.login.gateway.domain.entity.Account;
 import com.samcarpentier.login.gateway.domain.exception.AccountNotFoundException;
 import com.samcarpentier.login.gateway.domain.exception.WrongPasswordException;
+import com.samcarpentier.login.gateway.grpc.LoginRequest;
+import com.samcarpentier.login.gateway.grpc.LoginResponse;
+import com.samcarpentier.login.gateway.grpc.LoginService;
 
 import io.grpc.Status;
 import io.grpc.StatusException;

@@ -9,10 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.samcarpentier.authentication.ws.grpc.name.resolver.StaticAddressNameResolverFactory;
-import com.samcarpentier.login.gateway.LoginRequest;
-import com.samcarpentier.login.gateway.LoginResponse;
-import com.samcarpentier.login.gateway.LoginServiceGrpc;
-import com.samcarpentier.login.gateway.LoginServiceGrpc.LoginServiceBlockingStub;
+import com.samcarpentier.login.gateway.grpc.LoginRequest;
+import com.samcarpentier.login.gateway.grpc.LoginResponse;
+import com.samcarpentier.login.gateway.grpc.LoginServiceGrpc;
+import com.samcarpentier.login.gateway.grpc.LoginServiceGrpc.LoginServiceBlockingStub;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -60,11 +60,12 @@ public class LoginServiceClient {
                                                                  .setUsername(username)
                                                                  .setPassword(password)
                                                                  .build());
+
+      logger.debug(String.format("Phone numbers: %s", loginResponse.getPhoneNumbersList()));
     } catch (StatusRuntimeException e) {
       logger.warn(String.format("Login failed: %s", e.getStatus().getCode()));
     }
 
-    logger.debug(String.format("Phone numbers: %s", loginResponse.getPhoneNumbersList()));
     return loginResponse;
   }
 

@@ -1,4 +1,4 @@
-package com.samcarpentier.login.gateway;
+package com.samcarpentier.login.gateway.grpc;
 
 import java.util.Optional;
 
@@ -7,10 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.samcarpentier.login.gateway.application.LoginApplicationService;
 import com.samcarpentier.login.gateway.domain.entity.Account;
-import com.samcarpentier.login.gateway.domain.exception.AccountNotFoundException;
-import com.samcarpentier.login.gateway.domain.exception.WrongPasswordException;
+import com.samcarpentier.login.gateway.grpc.error.DomainErrorHandler;
 
-import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
@@ -48,16 +46,9 @@ public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
 
     try {
       account = Optional.of(loginApplicationService.login(username, password));
-    } catch (AccountNotFoundException e) {
+    } catch (Exception e) {
       logger.warn(e.getMessage());
-      responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage())
-                                               .withCause(e)
-                                               .asException());
-    } catch (WrongPasswordException e) {
-      logger.warn(e.getMessage());
-      responseObserver.onError(Status.PERMISSION_DENIED.withDescription(e.getMessage())
-                                                       .withCause(e)
-                                                       .asException());
+      responseObserver.onError(DomainErrorHandler.handle(e));
     }
 
     return account;

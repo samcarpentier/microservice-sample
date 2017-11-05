@@ -9,6 +9,7 @@ import com.samcarpentier.login.gateway.application.LoginApplicationService;
 import com.samcarpentier.login.gateway.data.InMemoryAccountRepository;
 import com.samcarpentier.login.gateway.data.development.AccountDevDataAbstractFactory;
 import com.samcarpentier.login.gateway.data.entity.AccountDtoAssembler;
+import com.samcarpentier.login.gateway.grpc.LoginService;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
