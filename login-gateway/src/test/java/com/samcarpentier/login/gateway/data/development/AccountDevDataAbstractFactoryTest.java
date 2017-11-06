@@ -23,7 +23,7 @@ public class AccountDevDataAbstractFactoryTest {
   private AccountDevDataAbstractFactory accountDevDataAbstractFactory;
 
   @Mock
-  private AccountInMemoryDevDataFactory inMemoryDevDataFactory;
+  private InMemoryAccountDevDataFactory inMemoryDevDataFactory;
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
@@ -32,7 +32,7 @@ public class AccountDevDataAbstractFactoryTest {
   public void setUp() {
     accountDevDataAbstractFactory = new AccountDevDataAbstractFactory() {
       @Override
-      protected AccountInMemoryDevDataFactory instantiateInMemoryDevDataFactory(InMemoryAccountRepository inMemoryAccountRepository) {
+      protected InMemoryAccountDevDataFactory instantiateInMemoryDevDataFactory(InMemoryAccountRepository inMemoryAccountRepository) {
         return inMemoryDevDataFactory;
       }
     };

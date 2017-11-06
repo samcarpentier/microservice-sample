@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.samcarpentier.authentication.ws.grpc.interceptor.ClientLoggingInterceptor;
 import com.samcarpentier.authentication.ws.grpc.name.resolver.StaticAddressNameResolverFactory;
 import com.samcarpentier.login.gateway.grpc.LoginRequest;
 import com.samcarpentier.login.gateway.grpc.LoginResponse;
@@ -40,6 +41,7 @@ public class LoginServiceClient {
                                                   .usePlaintext(true)
                                                   .nameResolverFactory(new StaticAddressNameResolverFactory(staticServerAddresses))
                                                   .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())
+                                                  .intercept(new ClientLoggingInterceptor())
                                                   .build();
 
     loginServiceBlockingStub = LoginServiceGrpc.newBlockingStub(channel);
@@ -61,7 +63,6 @@ public class LoginServiceClient {
                                                                  .setPassword(password)
                                                                  .build());
 
-      logger.debug(String.format("Phone numbers: %s", loginResponse.getPhoneNumbersList()));
     } catch (StatusRuntimeException e) {
       logger.warn(String.format("Login failed: %s", e.getStatus().getCode()));
     }

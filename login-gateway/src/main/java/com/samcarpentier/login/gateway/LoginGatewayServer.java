@@ -20,11 +20,11 @@ public class LoginGatewayServer {
   private static final int DEFAULT_PORT = 8080;
 
   public static void main(String[] args) throws InterruptedException, IOException {
-    int httpPort = selectHttpPort();
-    Server server = ServerBuilder.forPort(httpPort).addService(createLoginService()).build();
+    int port = selectPort();
+    Server server = ServerBuilder.forPort(port).addService(createLoginService()).build();
 
     server.start();
-    logger.info(String.format("Server started on port %s", httpPort));
+    logger.info(String.format("Server started on port %s", port));
     server.awaitTermination();
   }
 
@@ -32,7 +32,7 @@ public class LoginGatewayServer {
     InMemoryAccountRepository inMemoryAccountRepository = new InMemoryAccountRepository(new AccountDtoAssembler());
 
     if (isDevelopmentExecution()) {
-      System.out.println("Development execution detected. Provisioning dev data");
+      logger.debug("Development execution detected. Provisioning dev data");
       new AccountDevDataAbstractFactory().createDevelopmentData(inMemoryAccountRepository);
     }
 
@@ -40,12 +40,12 @@ public class LoginGatewayServer {
     return new LoginService(loginApplicationService);
   }
 
-  private static int selectHttpPort() {
+  private static int selectPort() {
     try {
       return Integer.parseInt(System.getProperty("port"));
     } catch (NumberFormatException e) {
-      System.out.println(String.format("Could not retrieve JVM argument [-Dport]. Using default port %s",
-                                       DEFAULT_PORT));
+      logger.debug(String.format("Could not retrieve JVM argument [-Dport]. Using default port %s",
+                                 DEFAULT_PORT));
       return DEFAULT_PORT;
     }
   }

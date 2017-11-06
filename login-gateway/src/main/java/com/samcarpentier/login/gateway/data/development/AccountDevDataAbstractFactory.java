@@ -17,8 +17,8 @@ public class AccountDevDataAbstractFactory {
     }
   }
 
-  protected AccountInMemoryDevDataFactory instantiateInMemoryDevDataFactory(InMemoryAccountRepository inMemoryAccountRepository) {
-    return new AccountInMemoryDevDataFactory(inMemoryAccountRepository);
+  protected InMemoryAccountDevDataFactory instantiateInMemoryDevDataFactory(InMemoryAccountRepository inMemoryAccountRepository) {
+    return new InMemoryAccountDevDataFactory(inMemoryAccountRepository);
   }
 
 }
